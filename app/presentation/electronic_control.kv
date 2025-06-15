@@ -1,0 +1,99 @@
+#:kivy 1.11.1
+#:import _ app.i18n.translations._
+
+ScreenManager:
+    id: screen_manager
+    LoginScreen: 
+        name: 'login'
+        id: login_screen_id
+    AdminDashboardScreen:
+        name: 'admin_dashboard'
+        id: admin_dashboard_id
+    UserDashboardScreen:
+        name: 'user_dashboard'
+        id: user_dashboard_id
+    ManageProgramsScreen:
+        name: 'manage_programs'
+        id: manage_programs_id
+    CreateEditProgramScreen:
+        name: 'create_edit_program'
+        id: create_edit_program_id
+    ManageUsersScreen:
+        name: 'manage_users'
+        id: manage_users_id
+    CreateEditUserScreen:
+        name: 'create_edit_user'
+        id: create_edit_user_id
+
+<LoginScreen>:
+    GridLayout:
+        cols: 1
+        padding: dp(20)
+        spacing: dp(10)
+        size_hint: (0.7, 0.6)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        Label:
+            id: app_title_label
+            text: _("app_title", "Electronic Control System")
+            font_size: '24sp'
+            size_hint_y: None
+            height: self.texture_size[1] + dp(10)
+
+        Label:
+            id: status_label 
+            text: "" 
+            color: (1, 0, 0, 1) 
+            font_size: '16sp'
+            size_hint_y: None
+            height: self.texture_size[1] if self.text else dp(1) 
+
+        GridLayout:
+            cols: 2
+            spacing: dp(10)
+            size_hint_y: None
+            height: dp(100) 
+
+            Label:
+                id: username_label_text
+                text: _("username_label", "Username:") 
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size 
+            TextInput:
+                id: username_input 
+                multiline: False
+                write_tab: False 
+                font_size: '18sp'
+                size_hint_x: 1.5
+
+            Label:
+                id: password_label_text
+                text: _("password_label", "Password:")
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size
+            TextInput:
+                id: password_input 
+                multiline: False
+                password: True
+                write_tab: False
+                font_size: '18sp'
+                size_hint_x: 1.5
+
+        Button:
+            id: login_button_text
+            text: _("login_button", "Login") 
+            font_size: '20sp'
+            size_hint_y: None
+            height: dp(50) 
+            on_press: root.login() 
+
+        Spinner:
+            id: language_spinner
+            text: app.current_language_display_name 
+            values: app.available_languages_display_names 
+            size_hint_y: None
+            height: dp(44)
+            font_size: '16sp'
+            on_text: app.change_language_from_spinner(self.text)
