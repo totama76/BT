@@ -1,0 +1,31 @@
+# Instrucciones de Implementación
+
+Para implementar estas modificaciones correctamente, sigue estos pasos en orden:
+
+1. MODIFICACIONES EN app/presentation/ui_manager.py:
+
+   a) Cambiar la definición de la propiedad current_user:
+      - Localiza la línea donde se define la clase ElectronicControlApp (alrededor de línea 1338)
+      - Cambia: current_user = ObjectProperty(None)
+      - Por: current_user = ObjectProperty(allownone=True)
+   
+   b) Añadir importación al inicio del archivo (después de las otras importaciones):
+      - from app.presentation.user_programs_screen import UserProgramsScreen
+   
+   c) Registrar la nueva pantalla en Factory (después de los otros registros, línea aprox. 1337):
+      - Factory.register('UserProgramsScreen', UserProgramsScreen)
+   
+   d) Actualizar el método view_programs_action en la clase UserDashboardScreen (línea aprox. 257):
+      - Reemplazar el contenido del método por el proporcionado
+
+2. CREAR NUEVO ARCHIVO app/presentation/user_programs_screen.py:
+   - Crear este archivo con el contenido completo proporcionado
+
+3. ACTUALIZAR app/presentation/electronic_control.kv:
+   - Añadir la definición de la pantalla UserProgramsScreen:
+     <UserProgramsScreen>:
+         name: 'user_programs'
+
+# Estos cambios resolverán:
+1. El error al cerrar sesión
+2. La implementación de la vista de programas para usuarios

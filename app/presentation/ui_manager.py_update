@@ -1,0 +1,22 @@
+# Añadir este import después de los otros imports
+from app.presentation.program_execution_screen import ExecuteProgramScreen
+
+# Añadir esta clase después de la definición de Factory.register
+Factory.register('ExecuteProgramScreen', ExecuteProgramScreen)
+
+# Modificar la clase ElectronicControlApp para pasar el servicio de ejecución
+class ElectronicControlApp(App):
+    current_user = ObjectProperty(None) 
+    current_language_display_name = StringProperty()
+    available_languages_display_names = ListProperty(["English", "Español", "Français"])
+    language_map = {"English": "en", "Español": "es", "Français": "fr"}
+    language_map_inverted = {v: k for k, v in language_map.items()}
+
+    def __init__(self, application_instance, **kwargs):
+        super().__init__(**kwargs)
+        self.application = application_instance
+        self.user_service = self.application.user_service
+        self.program_service = self.application.program_service
+        self.program_execution_service = self.application.program_execution_service
+        self.hardware_simulator = self.application.hardware_simulator
+        self._set_initial_language_properties()

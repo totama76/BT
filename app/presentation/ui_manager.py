@@ -30,6 +30,9 @@ except Exception as e:
 # Importar la función _ una sola vez y usarla en todas partes
 from app.i18n.translations import _
 
+# Importar la nueva pantalla de programas de usuario
+from app.presentation.user_programs_screen import UserProgramsScreen
+
 def get_translation(key, default=None):
     """Helper function to safely get translations"""
     try:
@@ -228,17 +231,8 @@ class UserDashboardScreen(BaseDashboardScreen):
         )
         self.view_programs_btn.bind(on_press=self.view_programs_action)
         
-        self.execute_program_btn = Button(
-            text=get_translation("execute_program_button", "Execute Program"),
-            font_size='18sp',
-            size_hint_y=None,
-            height=dp(48)
-        )
-        self.execute_program_btn.bind(on_press=self.execute_program_action)
-        
         # Añadir botones al área de contenido
         self.content_area.add_widget(self.view_programs_btn)
-        self.content_area.add_widget(self.execute_program_btn)
 
     def update_welcome_label(self):
         app = App.get_running_app()
@@ -251,14 +245,18 @@ class UserDashboardScreen(BaseDashboardScreen):
     def update_action_buttons_text(self):
         if hasattr(self, 'view_programs_btn'):
             self.view_programs_btn.text = get_translation("view_programs_button", "View Programs")
-        if hasattr(self, 'execute_program_btn'):
-            self.execute_program_btn.text = get_translation("execute_program_button", "Execute Program")
 
     def view_programs_action(self, instance):
-        print("UserDashboard: Navigating to View Programs (Not Implemented Yet)")
-
-    def execute_program_action(self, instance):
-        print("UserDashboard: Navigating to Execute Program (Not Implemented Yet)")
+        """Navegar a la pantalla de ver programas"""
+        print("UserDashboard: Navigating to View Programs")
+        
+        # Comprobar si la pantalla ya existe, y crearla si no
+        if not self.manager.has_screen('user_programs'):
+            from app.presentation.user_programs_screen import UserProgramsScreen
+            user_programs_screen = UserProgramsScreen(name='user_programs')
+            self.manager.add_widget(user_programs_screen)
+            
+        self.manager.current = 'user_programs'
 
 class ManageProgramsScreen(Screen):
     def __init__(self, **kwargs):
@@ -1334,9 +1332,11 @@ Factory.register('ManageProgramsScreen', ManageProgramsScreen)
 Factory.register('CreateEditProgramScreen', CreateEditProgramScreen)
 Factory.register('ManageUsersScreen', ManageUsersScreen)
 Factory.register('CreateEditUserScreen', CreateEditUserScreen)
+Factory.register('UserProgramsScreen', UserProgramsScreen)
 
 class ElectronicControlApp(App):
-    current_user = ObjectProperty(None) 
+    # CAMBIO CRÍTICO: Permitir que current_user sea None
+    current_user = ObjectProperty(allownone=True)
     current_language_display_name = StringProperty()
     available_languages_display_names = ListProperty(["English", "Español", "Français"])
     language_map = {"English": "en", "Español": "es", "Français": "fr"}
@@ -1347,6 +1347,8 @@ class ElectronicControlApp(App):
         self.application = application_instance
         self.user_service = self.application.user_service
         self.program_service = self.application.program_service
+        self.program_execution_service = getattr(self.application, 'program_execution_service', None)
+        self.hardware_simulator = getattr(self.application, 'hardware_simulator', None)
         self._set_initial_language_properties()
 
     def _set_initial_language_properties(self):
